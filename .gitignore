@@ -1,0 +1,5 @@
+target/
+.idea/
+pact-issue.iml
+intellijBuild/
+intellijBuildTest

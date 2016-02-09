@@ -1,0 +1,39 @@
+apply plugin: 'idea'
+apply plugin: 'groovy'
+
+buildscript {
+  ext {
+    groovyVersion = '2.4.4'
+  }
+  repositories {
+    mavenCentral()
+    jcenter()
+  }
+}
+
+idea {
+  module {
+    testSourceDirs += file('src/acceptance/groovy')
+    outputDir = new File("${project.buildDir}/../intellijBuild")
+    testOutputDir = new File("${project.buildDir}/../intellijBuildTest")
+  }
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+
+  compile "org.codehaus.groovy:groovy-all:${groovyVersion}"
+  compile 'org.springframework:spring-web:4.1.7.RELEASE'
+  compile 'com.fasterxml.jackson.core:jackson-databind:2.6.3'
+  compile 'org.slf4j:slf4j-simple:1.7.12'
+
+  testCompile 'junit:junit:4.12'
+  testCompile "au.com.dius:pact-jvm-consumer-groovy_2.11:3.2.0"
+}
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '2.5'
+}
