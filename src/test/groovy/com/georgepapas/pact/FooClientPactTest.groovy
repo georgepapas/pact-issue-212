@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.client.RestTemplate
 
+import java.util.regex.Matcher
+
 class FooClientPactTest {
 
   private FooServiceClient client
@@ -116,13 +118,17 @@ class FooClientPactTest {
 
       given('there is some good mallory') // defines a provider state. It is optional.
       uponReceiving('a retrieve Mallory request') // upon_receiving starts a new interaction
-      withAttributes(method: 'post', path: '/mallory')     // define the request, a GET request to '/mallory'
+      withAttributes(
+              method: 'post',
+              path: '/mallory',
+              headers: ['Accept': regexp(~/.*application\/json.*/, 'application/json')]
+      )     // define the request, a GET request to '/mallory'
       withBody {
         priceInCents 'xx'
       }
       willRespondWith(                        // define the response we want returned
               status: 200,
-              headers: ['Content-Type': 'application/json'],
+              headers: ['Content-Type': regexp(~/.*application\/json.*/, 'application/json')],
               body: '"That is some good Mallory."'
       )
     }
@@ -143,6 +149,12 @@ class FooClientPactTest {
   }
 
   @Test
+  void 'assert regex matches'() {
+    Matcher matcher = 'application/json;charset=UTF-8' =~ /.*application\/json.*/
+    assert matcher.matches()
+  }
+
+  @Test
   void "consumer with digits"() {
 
     def alice_service = new PactBuilder() // Create a new PactBuilder
@@ -154,13 +166,17 @@ class FooClientPactTest {
 
       given('there is some good mallory') // defines a provider state. It is optional.
       uponReceiving('a retrieve Mallory request') // upon_receiving starts a new interaction
-      withAttributes(method: 'post', path: '/mallory')     // define the request, a GET request to '/mallory'
+      withAttributes(
+              method: 'post',
+              path: '/mallory',
+              headers: ['Accept': regexp(~'.*application/json.*', 'application/json')]
+      )
       withBody {
         priceInCents 'x0x'
       }
       willRespondWith(                        // define the response we want returned
               status: 200,
-              headers: ['Content-Type': 'application/json'],
+              headers: ['Content-Type': regexp(~'.*application/json.*', 'application/json')],
               body: '"That is some good Mallory."'
       )
     }
